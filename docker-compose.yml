@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: enterprise_backend_api
+    depends_on:
+      - postgres
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      GS_DB_USER: postgres
+      GS_DB_PASSWORD: postgres
+      GS_DB: app_db
+      GS_DB_HOST: postgres
+      GS_DB_PORT: 5432
+      JWT_KEY: super_secret_change_me
+      JWT_EXPIRES_IN: 1d
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: enterprise_backend_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
